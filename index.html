@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Enfermería UCI (Preguntas 23-46)</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-main: #ffffff;
+            --text-dim: #b0b0b0;
+            --accent: #00e5ff;
+            --success: #4caf50;
+            --error: #f44336;
+            --border: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        #app {
+            width: 95%;
+            max-width: 700px;
+            background: var(--card-bg);
+            padding: 2rem;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin: 20px 0;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .counters {
+            display: flex;
+            gap: 15px;
+        }
+
+        .counter {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: bold;
+        }
+
+        .aciertos { background: rgba(76, 175, 80, 0.2); color: var(--success); border: 1px solid var(--success); }
+        .fallos { background: rgba(244, 67, 54, 0.2); color: var(--error); border: 1px solid var(--error); }
+
+        .progress-text {
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        h2 {
+            font-size: 1.15rem;
+            line-height: 1.4;
+            margin-bottom: 1.5rem;
+            color: #efefef;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option {
+            background: #252525;
+            border: 2px solid var(--border);
+            color: var(--text-main);
+            padding: 14px 18px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s ease;
+            font-size: 0.95rem;
+            line-height: 1.3;
+        }
+
+        .option:hover:not(:disabled) {
+            border-color: var(--accent);
+            background: #2a2a2a;
+        }
+
+        .option.correct {
+            background: var(--success) !important;
+            border-color: var(--success);
+            color: white;
+        }
+
+        .option.wrong {
+            background: var(--error) !important;
+            border-color: var(--error);
+            color: white;
+        }
+
+        .option:disabled {
+            cursor: default;
+            opacity: 0.9;
+        }
+
+        .controls {
+            margin-top: 2rem;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .btn-next, .btn-restart {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: transform 0.1s, background 0.2s;
+        }
+
+        .btn-next:disabled {
+            background: #444;
+            color: #888;
+            cursor: not-allowed;
+        }
+
+        .btn-next:active:not(:disabled) {
+            transform: scale(0.98);
+        }
+
+        .results {
+            text-align: center;
+        }
+
+        .results h1 { color: var(--accent); }
+    </style>
+</head>
+<body>
+
+<div id="app"></div>
+
+<script>
+    const questions = [
+        { q: "23. ¿CADA CUANTO SE REALIZA UNA HIGIENE COMPLETA?", options: ["cada 24 horas", "cada 48 horas", "cada 72 horas", "cada 12 horas"], correct: 0 },
+        { q: "24. ¿CUÁL ES UNA INTERFERENCIA EN LA MONITORIZACIÓN NO INVASIVA EN LA SATURACIÓN DE O2?", options: ["hipertermias", "que no haya suciedad", "anemias leve", "vasoconstricción periférica"], correct: 3 },
+        { q: "25. ¿QUÉ FUNCIONES REEMPLAZA LA UNIDAD DE CUIDADOS INTENSIVOS?", options: ["funciones inorgánicas alteradas por patologías", "funciones inorgánicas no alteradas por patologías", "funciones orgánicas alteradas por patologías", "funciones inorgánicas alteradas por enfermedades"], correct: 2 },
+        { q: "26. ¿CUÁNDO SE REALIZA EL CAMBIO DE CATÉTER CENTRAL?", options: ["cada 7 días", "cada 10 días", "cada 8 días", "cada 12 días"], correct: 0 },
+        { q: "27. ¿CUAL NO FORMA PARTE DE LA MONITORIZACIÓN NO INVASIVA ?", options: ["ecg", "ta", "etCo2/capnografía", "pa"], correct: 3 },
+        { q: "28. EN LA MONITORIZACIÓN NO INVASIVA EL TA SE TOMA:", options: ["AL INGRESO CADA 5-15 minutos", "AL INGRESO CADA 10-15 minutos", "AL INGRESO CADA 12-15 minutos", "AL INGRESO CADA 0-15 minutos"], correct: 0 },
+        { q: "29. ¿QUÉ NECESIDADES HAY EN LA UCI ?", options: ["de confort y sensitiva", "emocional y sensitiva", "emocional, de confort y sensitiva", "no hay ninguna necesidad"], correct: 2 },
+        { q: "30. ¿CUANTO SE REALIZA CUIDADOS RESPIRATORIOS EN LA NEBULIZACIÓN?", options: ["12 HORAS", "24 HORAS", "48 HORAS", "8H"], correct: 3 },
+        { q: "31. QUÉ SIGNIFICA EL PVC?", options: ["presión sanguínea a nivel de la aurícula izquierda y la vena cava", "presión sanguínea a nivel de la aurícula derecha y la vena cava", "presión sanguínea a nivel de la ventriculo derecho y la vena cava", "presión sanguínea a nivel de la aurícula derecha y la vena subclavia"], correct: 1 },
+        { q: "32. ¿CÓMO ES LA DISTRIBUCIÓN ESPACIAL DE LA ACTIVIDAD ASISTENCIAL EN LA UCI?", options: ["circulares y paralela", "paralela y lineales", "circulares y lineales", "cuadradas y lineales"], correct: 2 },
+        { q: "33. ¿CADA CUANTO SE REALIZA UN CAMBIO POSTURAL DE RIESGO MEDIO?", options: ["1-3 horas", "3-4 horas", "2-3 horas", "0-4 horas"], correct: 2 },
+        { q: "34. ¿CUÁLES SON LOS VALORES NORMALES DE PVC EN LA MONITORIZACIÓN INVASIVA?", options: ["0-5 AD y 6-12VDC", "10-15 AD y 6-12VDC", "0-5 AD y 5-15 VC", "0-5 AD y 6-12VDC"], correct: 0 },
+        { q: "35. EL GRADO I DE LA PIA CORRESPONDE CON:", options: ["7-11 MMHG / NINGÚN SIGNO CLÍNICO / MANTENER VOLEMIA", "7-15 MMHG / NINGÚN SIGNO CLÍNICO / MANTENER HIPERVOLEMIA", "7-16 MMHG / NINGÚN SIGNO CLÍNICO / MANTENER HIPOVOLEMIA", "7-10 MMHG / NINGÚN SIGNO CLÍNICO / MANTENER VOLEMIA"], correct: 0 },
+        { q: "36. ¿CUÁLES SON LOS CUIDADOS DIARIOS DEL PACIENTE CRÍTICO ?", options: ["realizar higiene, cambios posturales, cuidados vía venosa, cuidados drenaje-eliminación y balance hídrico.", "cambios posturales, cuidados vía venosa, cuidados drenaje- eliminación y balance hídrico.", "realizar higiene,cuidados vía venosa, cuidados drenaje- eliminación y balance hídrico.", "realizar higiene, cambios posturales, cuidados vía venosa, cuidados drenaje-eliminación"], correct: 0 },
+        { q: "37. ¿QUÉ TIPO DE MONITORIZACIÓN HAY EN LA UCI ?", options: ["invasiva", "no invasiva", "no invasiva e invasiva", "ninguna"], correct: 2 },
+        { q: "38. ¿CUAL FORMA PARTE DE LA MONITORIZACIÓN NO INVASIVA ?", options: ["pa", "pvc", "pia", "ta"], correct: 3 },
+        { q: "39. ¿CÓMO SE DEBE ACTUAR CUANDO LA SATURACIÓN DE O2 ES <80%?", options: ["remitir al hospital aunque mejoran con maniobras iniciales", "valorar intubación y ventilación mecánica.", "enfermo grave. hipoxia severa. oxigenoterapia +tratamiento y traslado al hospital.", "tratamiento inmediato y monitorización", "no se actúa"], correct: 1 },
+        { q: "40. ¿QUÉ PRESIONES SE MIDE EN LA MONITORIZACIÓN INVASIVA?", options: ["presión arterial pulmonar", "presión capilar pulmonar", "gasto cardiaco", "todas"], correct: 3 },
+        { q: "41. ¿CUAL NO ES UNA COMPLICACIÓN NO INMEDIATA QUE EMPEORA EL PRONÓSTICO?", options: ["upp", "infección nosocomial", "riesgo de caída", "riesgo de insuficiencia cardiaca"], correct: 3 },
+        { q: "42. ¿CÓMO SE DEBE ACTUAR CUANDO LA SATURACIÓN DE O2 ES <92% EN NIÑOS?", options: ["remitir al hospital aunque mejoran con maniobras iniciales, por ser más incierta su respuesta al tratamiento", "valorar intubación y ventilación mecánica.", "enfermo grave. hipoxia severa. oxigenoterapia +tratamiento y traslado al hospital.", "tratamiento inmediato y monitorización", "no se actúa"], correct: 0 },
+        { q: "43. ¿DE QUÉ DEPENDE LA PVC EN LA MONITORIZACIÓN INVASIVA?", options: ["volemia, tono esquelético y estado de la bomba muscular cardiaca", "tono muscular y estado de la bomba muscular cardiaca", "volemia, tono muscular y estado de la bomba muscular cardiaca", "volemia y estado de la bomba muscular cardiaca"], correct: 2 },
+        { q: "44. ¿CADA CUANTO SE REALIZA UN CAMBIO POSTURAL DE ALTO RIESGO?", options: ["1-3 horas", "0-3 horas", "2-3 horas", "1-2 horas"], correct: 3 },
+        { q: "45. ¿CUAL ES EL OBJETIVO DE LA MONITORIZACIÓN INVASIVA?", options: ["Evaluar la función ventricular derecha por medio de las presiones y el volumen minuto cardiaco.", "Evaluar la función ventricular izquierda por medio de las presiones y el volumen minuto cardiaco", "Evaluar la función ventricular derecha e izquierda por medio de las presiones y el volumen hora cardiaco", "Evaluar la función ventricular derecha e izquierda por medio de las presiones y el volumen minuto cardiaco"], correct: 3 },
+        { q: "46. ¿CUAL ES EL OBJETIVO DE LA ACTIVIDAD ASISTENCIAL EN LA UCI?", options: ["brindar un cuidado no integral en condiciones críticas", "brindar un cuidado integral en condiciones críticas", "brindar un cuidado integral en condiciones saludables", "brindar un ciudado no integral en condiciones saludables"], correct: 1 }
+    ];
+
+    let currentQuestion = 0;
+    let aciertos = 0;
+    let fallos = 0;
+    let hasAnswered = false;
+
+    const app = document.getElementById('app');
+
+    function renderQuestion() {
+        if (currentQuestion >= questions.length) {
+            renderResults();
+            return;
+        }
+
+        hasAnswered = false;
+        const qData = questions[currentQuestion];
+        app.innerHTML = `
+            <div class="header">
+                <span class="progress-text">Pregunta ${currentQuestion + 1} de ${questions.length}</span>
+                <div class="counters">
+                    <span class="counter aciertos">Aciertos: ${aciertos}</span>
+                    <span class="counter fallos">Fallos: ${fallos}</span>
+                </div>
+            </div>
+            <h2>${qData.q}</h2>
+            <div class="options" id="options-box">
+                ${qData.options.map((opt, i) => `
+                    <button class="option" onclick="checkAnswer(${i})">${String.fromCharCode(97 + i)}. ${opt}</button>
+                `).join('')}
+            </div>
+            <div class="controls">
+                <button id="next-btn" class="btn-next" onclick="nextQuestion()" disabled>Siguiente Pregunta</button>
+            </div>
+        `;
+    }
+
+    window.checkAnswer = function(index) {
+        if (hasAnswered) return;
+        hasAnswered = true;
+        
+        const qData = questions[currentQuestion];
+        const buttons = document.querySelectorAll('.option');
+        const nextBtn = document.getElementById('next-btn');
+        
+        buttons.forEach(btn => btn.disabled = true);
+
+        if (index === qData.correct) {
+            buttons[index].classList.add('correct');
+            aciertos++;
+        } else {
+            buttons[index].classList.add('wrong');
+            buttons[qData.correct].classList.add('correct');
+            fallos++;
+        }
+
+        nextBtn.disabled = false;
+        document.querySelector('.aciertos').innerText = `Aciertos: ${aciertos}`;
+        document.querySelector('.fallos').innerText = `Fallos: ${fallos}`;
+    }
+
+    window.nextQuestion = function() {
+        currentQuestion++;
+        renderQuestion();
+        window.scrollTo(0, 0);
+    }
+
+    function renderResults() {
+        const total = questions.length;
+        const percent = Math.round((aciertos / total) * 100);
+        app.innerHTML = `
+            <div class="results">
+                <h1>Test Completado</h1>
+                <p>Resultados del bloque de preguntas 23-46:</p>
+                <p style="font-size: 1.5rem; margin: 20px 0;">Efectividad: <strong>${percent}%</strong></p>
+                <div style="display: flex; justify-content: center; gap: 40px; margin: 30px 0;">
+                    <div><h3 style="color: var(--success); margin: 0; font-size: 2.5rem;">${aciertos}</h3><small>Aciertos</small></div>
+                    <div><h3 style="color: var(--error); margin: 0; font-size: 2.5rem;">${fallos}</h3><small>Fallos</small></div>
+                </div>
+                <button class="btn-restart" onclick="restart()">Reiniciar Test</button>
+            </div>
+        `;
+    }
+
+    window.restart = function() {
+        currentQuestion = 0;
+        aciertos = 0;
+        fallos = 0;
+        renderQuestion();
+    }
+
+    renderQuestion();
+</script>
+
+</body>
+</html>
